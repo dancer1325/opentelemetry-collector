@@ -1,0 +1,24 @@
+exporters:
+  # exporterType
+  exampleexporter:                # exporter's full name
+    # <setting one>: <value one>
+    endpoint: 1.2.3.4:8080
+    # ...
+  # exporterType>/customName
+  exampleexporter/settings:       # exporter's full name
+    # <setting two>: <value two>
+    endpoint: 0.0.0.0:9211
+
+service:
+  pipelines:
+    # Valid pipelines are: traces, metrics or logs
+    # Trace pipeline 1.
+    traces:
+      receivers: [examplereceiver]
+      processors: []
+      exporters: [exampleexporter, exampleexporter/settings]
+    # Trace pipeline 2.
+    traces/another:
+      receivers: [examplereceiver]
+      processors: []
+      exporters: [exampleexporter, exampleexporter/settings]
