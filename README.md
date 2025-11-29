@@ -49,43 +49,52 @@
 
 # <img src="https://opentelemetry.io/img/logos/opentelemetry-logo-nav.png" alt="OpenTelemetry Icon" width="45" height=""> OpenTelemetry Collector
 
-The OpenTelemetry Collector offers a vendor-agnostic implementation on how to
-receive, process and export telemetry data. In addition, it removes the need
-to run, operate and maintain multiple agents/collectors in order to support
-open-source telemetry data formats (e.g. Jaeger, Prometheus, etc.) to
-multiple open-source or commercial back-ends.
+* OpenTelemetry Collector
+  * == vendor-agnostic implementation 
+    * allows, about telemetry data,
+      * receive, 
+      * process
+      * export
+  * avoid
+    * run + operate + maintain MULTIPLE agents/collectors
+  * 's goal 
+    - Usable
+      - -- via -- default configuration
+      - supports POPULAR protocols
+    - Performant
+      - EVEN | DIFFERENT loads & configurations
+    - Observable
+      - == exemplar of an observable service
+      - == exposes it's OWN telemetry data
+    - Extensible
+      - WITHOUT touching the core code
+    - Unified
+      - 1! codebase
+        - ways to be deployed
+          - as an agent, OR
+          - as a collector
+        - support ALL telemetry data (traces, metrics and logs)
 
-Objectives:
-
-- Usable: Reasonable default configuration, supports popular protocols, runs and collects out of the box.
-- Performant: Highly stable and performant under varying loads and configurations.
-- Observable: An exemplar of an observable service.
-- Extensible: Customizable without touching the core code.
-- Unified: Single codebase, deployable as an agent or collector with support for traces, metrics and logs.
+## Documentation
+* [here](docs/README.md)
 
 ## Community
 
-The OpenTelemetry Collector SIG is present at the [#otel-collector](https://cloud-native.slack.com/archives/C01N6P7KR6W)
-channel on the CNCF Slack and [meets once a week](https://github.com/open-telemetry/community#implementation-sigs) via
-video calls. Everyone is invited to join those calls, which typically serves the following purposes:
+* OpenTelemetry Collector SIG
+  * [Slack's channel #otel-collector](https://cloud-native.slack.com/archives/C01N6P7KR6W)
+  * [meeting](https://github.com/open-telemetry/community#implementation-sigs)
+    * goal
+      - meet the humans behind the project
+      - get an opinion about specific proposals
+      - look for a sponsor for a proposed component after trying already via GitHub and Slack
+      - get attention to a specific pull-request that got stuck and is difficult to discuss asynchronously
+    * rotation order
+      * Tuesday: [17:00 PT](https://dateful.com/convert/pst-pdt-pacific-time?t=1700)
+      * Wednesday
+        - [09:00 PT](https://dateful.com/convert/pst-pdt-pacific-time?t=0900)
+        - [05:00 PT](https://dateful.com/convert/pst-pdt-pacific-time?t=0500)
 
-- meet the humans behind the project
-- get an opinion about specific proposals
-- look for a sponsor for a proposed component after trying already via GitHub and Slack
-- get attention to a specific pull-request that got stuck and is difficult to discuss asynchronously
-
-We rotate our video calls between three time slots, in order to
-allow everyone to join at least once every three meetings. The rotation order is as follows:
-
-Tuesday:
-
-- [17:00 PT](https://dateful.com/convert/pst-pdt-pacific-time?t=1700)
-
-Wednesday:
-
-- [09:00 PT](https://dateful.com/convert/pst-pdt-pacific-time?t=0900)
-- [05:00 PT](https://dateful.com/convert/pst-pdt-pacific-time?t=0500)
-
+* TODO: 
 Contributors to the project are also welcome to have ad-hoc meetings for synchronous discussions about specific points.
 Post a note in #otel-collector-dev on Slack inviting others, specifying the topic to be discussed. Unless there are strong
 reasons to keep the meeting private, please make it an open invitation for other contributors to join. Try also to
@@ -98,10 +107,9 @@ calls and don't want them to feel excluded.
 
 ## Supported OTLP version
 
-This code base is currently built against using OTLP protocol v1.5.0,
-considered Stable. [See the OpenTelemetry Protocol Stability
-definition
-here.](https://github.com/open-telemetry/opentelemetry-proto?tab=readme-ov-file#stability-definition)
+* OTLP protocol v1.5.0
+
+* [OpenTelemetry Protocol Stability](https://github.com/open-telemetry/opentelemetry-proto?tab=readme-ov-file#stability-definition)
 
 ## Stability levels
 
@@ -157,9 +165,8 @@ The following checks were performed on each of these signatures:
 
 ## Contributing
 
-See the [Contributing Guide](CONTRIBUTING.md) for details.
+* [Contributing Guide](CONTRIBUTING.md)
 
-Here is a list of community roles with current and previous members:
 
 ### Maintainers
 
@@ -193,39 +200,3 @@ the role of the [release manager](./docs/release.md#release-manager).
 - Actively seeking contributors to triage issues
 
 For more information about the triager role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#triager).
-
-### Emeritus Maintainers
-
-- [Paulo Janotti](https://github.com/pjanotti)
-- [Tigran Najaryan](https://github.com/tigrannajaryan)
-
-For more information about the emeritus role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#emeritus-maintainerapprovertriager).
-
-### Emeritus Approvers
-
-- [Anthony Mirabella](https://github.com/Aneurysm9)
-- [Daniel Jaglowski](https://github.com/djaglowski)
-- [James Bebbington](https://github.com/james-bebbington)
-- [Jay Camp](https://github.com/jrcamp)
-- [Juraci Paixão Kröhling](https://github.com/jpkrohling)
-- [Nail Islamov](https://github.com/nilebox)
-- [Owais Lone](https://github.com/owais)
-- [Rahul Patel](https://github.com/rghetia)
-- [Steven Karis](https://github.com/sjkaris)
-
-For more information about the emeritus role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#emeritus-maintainerapprovertriager).
-
-### Emeritus Triagers
-
-- [Alolita Sharma](https://github.com/alolita)
-- [Andrew Hsu](https://github.com/andrewhsu)
-- [Punya Biswal](https://github.com/punya)
-- [Steve Flanders](https://github.com/flands)
-
-For more information about the emeritus role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#emeritus-maintainerapprovertriager).
-
-### Thanks to all of our contributors!
-
-<a href="https://github.com/open-telemetry/opentelemetry-collector/graphs/contributors">
-  <img alt="Repo contributors" src="https://contrib.rocks/image?repo=open-telemetry/opentelemetry-collector" />
-</a>
