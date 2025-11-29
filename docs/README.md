@@ -11,7 +11,7 @@
       * can include compatible [Collector components](#opentelemetry-collector-components) /
         * user wishes to include
   * allows
-    * easily switch BETWEEN [OpenTelemetry Collector Distributions](#opentelemetry-collector-distribution)
+    * easily switch BETWEEN [OpenTelemetry Collector Distributions](#opentelemetry-collector-distribution-distro)
       * Reason:🧠thanks to BOTH mechanismS🧠
     * OpenTelemetry Collector's produced components can work | any OpenTelemetry Collector supported vendor 
 
