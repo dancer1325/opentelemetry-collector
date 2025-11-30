@@ -1,67 +1,64 @@
 # General Information
 
-A receiver is how data gets into the OpenTelemetry Collector. Generally, a
-receiver accepts data in a specified format, translates it into the internal
-format and passes it to [processors](../processor/README.md) and [exporters](../exporter/README.md) defined 
-in the applicable pipelines.
+* receiver
+  * == 👀how data gets -- into the -- OpenTelemetry Collector👀
+    * steps
+      * accept data / specified format
+      * translates data -- into the -- internal format
+      * passes it -- to -- pipelines' 
+        * [processors](../processor/README.md)
+        * [exporters](../exporter/README.md) 
+  * instance's full name
+    * == 👀`receiverType/appendedName`👀
+      * requirements
+        * ⚠️unique⚠️
+    * uses
+      * | pipelines
+  * supported ones
+    * core ones
+      * [OTLP Receiver](otlpreceiver/README.md)
+    * [contrib repository ones](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver)
 
-This repository hosts the following receiver available in traces, metrics
-and logs pipelines:
+* goal
+  * 👀receiver / available | traces, metrics and logs pipelines👀
 
-- [OTLP Receiver](otlpreceiver/README.md)
+## how to configure?
 
-The [contrib repository](https://github.com/open-telemetry/opentelemetry-collector-contrib)
-has more receivers available in its builds.
+* -- via -- YAML
+  * 👀top-level `receivers`👀
 
-## Configuring Receivers
+* _Example:_ [`exampleReceiver`](example_test.go)
 
-Receivers are configured via YAML under the top-level `receivers` tag. There
-must be at least one enabled receiver for a configuration to be considered
-valid.
+    ```yaml
+    # define the receivers
+    receivers:
+        # Receiver 1.
+        # <receiverType>:
+        examplereceiver:
+            # <setting1>: <value1>
+            endpoint: 1.2.3.4:8080
+            # ...
+        
+        # Receiver 2.
+        # <receiverType>/<appendedName>:
+        examplereceiver/settings:
+            # <setting2>: <value2>
+            endpoint: 0.0.0.0:9211
 
-The following is a sample configuration for the `examplereceiver`.
-
-```yaml
-receivers:
-  # Receiver 1.
-  # <receiver type>:
-  examplereceiver:
-    # <setting one>: <value one>
-    endpoint: 1.2.3.4:8080
-    # ...
-  # Receiver 2.
-  # <receiver type>/<name>:
-  examplereceiver/settings:
-    # <setting two>: <value two>
-    endpoint: 0.0.0.0:9211
-```
-
-A receiver instance is referenced by its full name in other parts of the config,
-such as in pipelines. A full name consists of the receiver type, '/' and the
-name appended to the receiver type in the configuration. All receiver full names
-must be unique.
-
-For the example above:
-
-- Receiver 1 has full name `examplereceiver`.
-- Receiver 2 has full name `examplereceiver/settings`.
-
-Receivers are enabled upon being added to a pipeline. For example:
-
-```yaml
-service:
-  pipelines:
-    # Valid pipelines are: traces, metrics or logs
-    # Trace pipeline 1.
-    traces:
-      receivers: [examplereceiver, examplereceiver/settings]
-      processors: []
-      exporters: [exampleexporter]
-    # Trace pipeline 2.
-    traces/another:
-      receivers: [examplereceiver, examplereceiver/settings]
-      processors: []
-      exporters: [exampleexporter]
-```
-
-> At least one receiver must be enabled per pipeline to be a valid configuration.
+    # enable the receivers  == use them
+    service:
+        pipelines:
+            # ALLOWED pipelines: traces, metrics or logs
+            # Trace pipeline 1.
+            traces:
+                receivers: [examplereceiver, examplereceiver/settings]
+                processors: []
+                exporters: [exampleexporter]
+            # Trace pipeline 2.
+            traces/another:
+                receivers: [examplereceiver, examplereceiver/settings]
+                processors: []
+                exporters: [exampleexporter]
+    ```
+  * receiver1's full name == `examplereceiver`
+  * receiver2's full name == `examplereceiver/settings`

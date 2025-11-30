@@ -1,13 +1,14 @@
 # General Information
 
 * exporter
-  * == how the pipeline data leaves the collector
+  * == 👀how the pipeline data leaves the collector👀
   * AVAILABLE | ALL telemetry data (traces, metrics and logs)
-    * | this repo
+  * supported
+    * core ones
       - [Debug](debugexporter/README.md)
       - [OTLP gRPC](otlpexporter/README.md)
       - [OTLP HTTP](otlphttpexporter/README.md)
-    * | [contrib repository](https://github.com/open-telemetry/opentelemetry-collector-contrib)
+    * [contrib ones](https://github.com/open-telemetry/opentelemetry-collector-contrib)
 
 ## Configuring Exporters
 

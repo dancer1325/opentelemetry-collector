@@ -1,40 +1,35 @@
 # General Information
 
-Processors are used at various stages of a pipeline. Generally, a processor
-pre-processes data before it is exported (e.g. modify attributes or sample).
-
-Some important aspects of pipelines and processors to be aware of:
-- [Recommended Processors](#recommended-processors)
-- [Data Ownership](#data-ownership)
-- [Exclusive Ownership](#exclusive-ownership)
-- [Shared Ownership](#shared-ownership)
-- [Ordering Processors](#ordering-processors)
-- [Creating Custom Processor](#creating-custom-processors)
-
-Supported processors (sorted alphabetically):
-- [Batch Processor](batchprocessor/README.md)
-- [Memory Limiter Processor](memorylimiterprocessor/README.md)
-
-The [contrib repository](https://github.com/open-telemetry/opentelemetry-collector-contrib)
- has more processors that can be added to a custom build of the Collector.
+* Processors
+  * allows
+    * BEFORE exporting data, pre-processes data
+  * uses
+    * 👀| pipeline's stages👀
+  * 👀supported ones👀
+    - core ones
+      - [Batch Processor](batchprocessor/README.md)
+      - [Memory Limiter Processor](memorylimiterprocessor/README.md)
+    - [contrib repository ones](https://github.com/open-telemetry/opentelemetry-collector-contrib)
 
 ## Recommended Processors
 
-By default, no processors are enabled. Depending on the data source, it may be
-recommended that multiple processors be enabled. Processors must be enabled
-for every data source and not all processors support all data sources.
-In addition, it is important to note that the order of processors matters. The
-order in each section below is the best practice. Refer to the individual
-processor documentation for more information.
+* by default,
+  * ❌NO processors are enabled❌
+* ⚠️-- depends on -- data source⚠️
+  * == NOT ALL processors support ALL data sources
+* ⚠️order of processors matter⚠️ 
+  * recommended one
 
-1. [memory_limiter](memorylimiterprocessor/README.md)
-2. Any sampling or initial filtering processors
-3. Any processor relying on sending source from `Context` (e.g. `k8sattributes`)
-3. [batch](batchprocessor/README.md)
-4. Any other processors
+    1. [memory_limiter](memorylimiterprocessor/README.md)
+    2. sampling OR initial filtering processors
+    3. processor / rely on sending source -- from -- `Context` (e.g. `k8sattributes`)
+    4. [batch](batchprocessor/README.md)
+       * Reason of batch executed here: 🧠batching should happen AFTER data drops (_Example:_ sampling)🧠
+    5. OTHER processors
 
 ## Data Ownership
 
+* TODO:
 The ownership of the `pdata.Traces`, `pdata.Metrics` and `pdata.Logs` data in a pipeline
 is passed as the data travels through the pipeline. The data is created by the receiver
 and then the ownership is passed to the first processor when `ConsumeTraces`/`ConsumeMetrics`/`ConsumeLogs`
@@ -109,5 +104,7 @@ order in which each processor is applied.
 
 ## Creating Custom Processors
 
-To create a custom processor for the OpenTelemetry Collector, you need to implement the processor interface, define the processor's configuration, and register it with the Collector. The process typically involves creating a factory, implementing the required processing logic, and handling configuration options. For a practical example and guidance, refer to the [`processorhelper`](https://pkg.go.dev/go.opentelemetry.io/collector/processor/processorhelper) package, which provides utilities and patterns to simplify processor development.
+To create a custom processor for the OpenTelemetry Collector, you need to implement the processor interface, define the processor's configuration, and register it with the Collector
+The process typically involves creating a factory, implementing the required processing logic, and handling configuration options
+* For a practical example and guidance, refer to the [`processorhelper`](https://pkg.go.dev/go.opentelemetry.io/collector/processor/processorhelper) package, which provides utilities and patterns to simplify processor development.
 

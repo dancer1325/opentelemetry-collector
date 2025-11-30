@@ -30,6 +30,10 @@
       telemetry:
       pipelines:
     ```
+    * [`receivers`](../receiver/README.md)
+    * [`processors`](../processor/README.md)
+    * [`exporters`](../exporter/README.md)
+    * TODO:
 
 ## OpenTelemetry Collector components
 

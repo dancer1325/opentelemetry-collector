@@ -17,33 +17,47 @@
 
 ## Overview
 
-The memory limiter processor is used to prevent out of memory situations on
-the collector. Given that the amount and type of data the collector processes is
-environment-specific and resource utilization of the collector is also dependent
-on the configured processors, it is important to put checks in place regarding
-memory usage.
+* uses
+  * prevent out of collector's memory situations 
+    * == avoid collector's memory is out of space
+* ⚠️put checks -- about -- memory usage⚠️
+  * Reason:🧠
+    * amount & type of data / collector processes
+      * environment-specific
+    * collector's resource utilization
+      * -- depend on the -- configured processors🧠 
 
 ## Functionality
 
-The memory limiter processor performs periodic checks of memory
-usage and will begin refusing data and forcing GC to reduce
-memory consumption when defined limits have been exceeded.
+* memory limiter processor 
+  * performs periodic checks of memory usage
+  * | exceed the defined limits (== soft limit),
+    * == memory limited mode
+    * reduce memory consumption -- via --
+      * refuse data
+      * force GC
+    * return errors -- to the -- pipeline's preceding component / 
+      * made the ConsumeLogs/Trace/Metrics function call
+      * == non-permanent error
+      * | being seen by the receivers,
+        * receivers
+          * expect: retry sending the SAME data
+          * apply backpressure | their OWN data sources
+            * Reason:🧠
+              * slow the inflow of data | Collector,
+              * allow memory usage < set limits🧠
 
-The processor uses soft and hard memory limits. The hard limit is defined via the
-`limit_mib` configuration option, and is always above or equal
-to the soft limit. The difference between the soft limit and hard limit is defined via
-the `spike_limit_mib` configuration option.
+* types of memory limits
+  * are
+    * soft
+      * ❌NO EXPLICITLY configurable❌
+        * Reason:🧠you specify `limit_mib` & `spike_limit_mib`🧠
+    * hard -- `limit_mib` -- 
+      * \>= soft limit
+  * `spike_limit_mib`
+    * == `limit_mib` - softLimit
 
-The processor will enter memory limited mode and will start refusing the data when
-memory usage exceeds the soft limit. This is done by returning errors to the preceding component
-in the pipeline that made the ConsumeLogs/Trace/Metrics function call.
-
-In memory limited mode the error returned by ConsumeLogs/Trace/Metrics function is a
-non-permanent error. When receivers see this error they are expected to retry sending
-the same data. The receivers may also apply backpressure to their own data sources
-in order to slow the inflow of data into the Collector, and to allow memory usage
-to go below the set limits.
-
+* TODO:
 > Warning: Data will be permanently lost if the component preceding the memory limiter
 > in the telemetry pipeline does not correctly retry sending data after it has
 > been refused by the memory limiter.
@@ -60,35 +74,39 @@ be performed.
 
 Note that while the processor can help mitigate out of memory situations,
 it is not a replacement for properly sizing and configuring the
-collector. Keep in mind that if the soft limit is crossed, the collector will
-return errors to all receive operations until enough memory is freed. This may
+collector
+* Keep in mind that if the soft limit is crossed, the collector will
+return errors to all receive operations until enough memory is freed
+* This may
 eventually result in dropped data since the receivers may not be able to
 retry the data indefinitely.
 
 It is highly recommended to configure the `GOMEMLIMIT`
 [environment variable](https://pkg.go.dev/runtime#hdr-Environment_Variables) as well
-as the `memory_limiter` processor on every collector. `GOMEMLIMIT` should be set to
-80% of the hard memory limit of your collector. For the `memory_limiter` processor, the
-best practice is to add it as the first processor in a pipeline. This is to ensure that backpressure
+as the `memory_limiter` processor on every collector
+* `GOMEMLIMIT` should be set to
+80% of the hard memory limit of your collector
+* For the `memory_limiter` processor, the
+best practice is to add it as the first processor in a pipeline
+* This is to ensure that backpressure
 can be sent to applicable receivers and minimize the likelihood of dropped data when the
 `memory_limiter` gets triggered.
 
 The value of the `spike_limit_mib` configuration option should be selected in a way
 that ensures that memory usage cannot increase by more than this value within a single
-memory check interval. Otherwise, memory usage may exceed the hard limit, even if temporarily.
-A good starting point for `spike_limit_mib` is 20% of the hard limit. Bigger
+memory check interval
+* Otherwise, memory usage may exceed the hard limit, even if temporarily.
+A good starting point for `spike_limit_mib` is 20% of the hard limit
+* Bigger
 `spike_limit_mib` values may be necessary for spiky traffic or for longer check intervals.
-
 
 ## Configuration
 
-Please refer to [memorylimiter.go](../../internal/memorylimiter/memorylimiter.go) for the config spec.
+* [config spec](../../internal/memorylimiter/config.md)
 
-The following configuration options **must be changed**:
-- `check_interval` (default = 0s): Time between measurements of memory
-usage. The recommended value is 1 second.
-If the expected traffic to the Collector is very spiky then decrease the `check_interval`
-or increase `spike_limit_mib` to avoid memory usage going over the hard limit.
+* TODO: The following configuration options **must be changed**:
+
+
 - `limit_mib` (default = 0): Maximum amount of memory, in MiB, targeted to be
 allocated by the process heap. Note that typically the total memory usage of
 process will be about 50MiB higher than this value.  This defines the hard limit.
@@ -135,5 +153,4 @@ On a machine with 1000 MiB total memory available:
 - Hard limit will be set to 1000 * 0.80 = **800 MiB**.
 - Soft limit will be set to 1000 * 0.80 - 1000 * 0.15 = 1000 * 0.65 = **650 MiB**.
 
-Refer to [config.yaml](../../internal/memorylimiter/testdata/config.yaml) for detailed
-examples on using the processor.
+* _Example:_ [config.yaml](../../internal/memorylimiter/testdata/config.yaml)
