@@ -1,25 +1,37 @@
 # gRPC Configuration Settings
 
-gRPC exposes a [variety of settings](https://godoc.org/google.golang.org/grpc).
-Several of these settings are available for configuration within individual
-receivers or exporters. In general, none of these settings should need to be
-adjusted.
+* [gRPC Go implementation](https://godoc.org/google.golang.org/grpc)
+  * expose settings /
+    * 👀ALSO valid | 
+      * individual receivers
+      * [individual exporters](../../exporter/README.md)👀
 
 ## Client Configuration
 
-[Exporters](https://github.com/open-telemetry/opentelemetry-collector/blob/main/exporter/README.md)
-leverage client configuration.
+* [`ClientConfig`](configgrpc.md)
 
-Note that client configuration supports TLS configuration, the
-configuration parameters are also defined under `tls` like server
-configuration. For more information, see [configtls
-README](../configtls/README.md).
+* TLS configuration -- `tls` --
+  * [configtls](../configtls/README.md)
 
-- [`balancer_name`](https://github.com/grpc/grpc-go/blob/master/examples/features/load_balancing/README.md): Default before v0.103.0 is `pick_first`, default for v0.103.0 is `round_robin`. See [issue](https://github.com/open-telemetry/opentelemetry-collector/issues/10298). To restore the previous behavior, set `balancer_name` to `pick_first`.
-- `compression`: Compression type to use among `gzip`, `snappy`, `zstd`, and `none`.
-- `endpoint`: Valid value syntax available [here](https://github.com/grpc/grpc/blob/master/doc/naming.md)
+- [`balancer_name`](https://github.com/grpc/grpc-go/blob/master/examples/features/load_balancing/README.md)
+  - by default,
+    - BEFORE v0.103.0,
+      - `pick_first`
+    - | v0.103.0,
+      - `round_robin`
+  - [issue](https://github.com/open-telemetry/opentelemetry-collector/issues/10298)
+- `compression`
+  - ALLOWED values
+    - `gzip`
+    - `snappy`
+    - `zstd`
+    - `none`
+- `endpoint`
+  - [value syntax](https://github.com/grpc/grpc/blob/master/doc/naming.md)
 - [`tls`](../configtls/README.md)
-- `headers`: name/value pairs added to the request
+- `headers`
+  - == name/value pairs
+    - added | request
 - [`keepalive`](https://godoc.org/google.golang.org/grpc/keepalive#ClientParameters)
   - `permit_without_stream`
   - `time`
@@ -29,7 +41,8 @@ README](../configtls/README.md).
 - [`auth`](../configauth/README.md)
 - [`middlewares`](../configmiddleware/README.md)
 
-Please note that [`per_rpc_auth`](https://pkg.go.dev/google.golang.org/grpc#PerRPCCredentials) which allows the credentials to send for every RPC is now moved to become an [extension](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/extension/bearertokenauthextension). Note that this feature isn't about sending the headers only during the initial connection as an `authorization` header under the `headers` would do: this is sent for every RPC performed during an established connection.
+Please note that [`per_rpc_auth`](https://pkg.go.dev/google.golang.org/grpc#PerRPCCredentials) which allows the credentials to send for every RPC is now moved to become an [extension](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/extension/bearertokenauthextension)
+Note that this feature isn't about sending the headers only during the initial connection as an `authorization` header under the `headers` would do: this is sent for every RPC performed during an established connection.
 
 Example:
 

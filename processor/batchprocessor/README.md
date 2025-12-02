@@ -26,92 +26,77 @@
   * supported types
     * size based batching
     * time based batching
+  * [config spec](./config.md)
+    * _Examples:_
+      * _Example1:_
 
-* [config spec](./config.md)
+        ```yaml
+        ...
+        processors:
+          batch:
+            timeout: 200ms
+            send_batch_size: 8192
+            send_batch_max_size: 10000
+            metadata_keys:
+              - tenant_id
+              - country_id
+            metadata_cardinality_limit: 10
+        ...
+        ```
+      * _Example2:_ 2 batch processorS
 
-The following configuration options can be modified:
-- `send_batch_size`: Number of spans, metric data points, or log
-records after which a batch will be sent regardless of the timeout. `send_batch_size`
-acts as a trigger and does not affect the size of the batch. If you need to
-enforce batch size limits sent to the next component in the pipeline
-see `send_batch_max_size`.
-- `send_batch_max_size` (default = 0): The upper limit of the batch size.
-  `0` means no upper limit of the batch size.
-  This property ensures that larger batches are split into smaller units.
-  It must be greater than or equal to `send_batch_size`.
-- `metadata_keys` (default = empty): When set, this processor will
-  create one batcher instance per distinct combination of values in
-  the `client.Metadata`.
-- `metadata_cardinality_limit` (default = 1000): When `metadata_keys` is 
-  not empty, this setting limits the number of unique combinations of 
-  metadata key values that will be processed over the lifetime of the
-  process.
+        ```yaml
+        processors:
+          # default batch processor
+          batch:
+          
+          # batch processor / custom settings
+          batch/2:
+            # ONCE batch's size = 10000 spans OR metric data points OR log records -> sent
+            send_batch_size: 10000    
+            # ONCE timeout: 10s -> sent
+            timeout: 10s
+        ```
+      * _Example3:_ 
 
-See notes about metadata batching below.
+        ```yaml
+        processors:
+          batch:
+            # if batch's size 
+            #   <= 10000    -> send DIRECTLY
+            #   > 10000     -> split them
+            send_batch_max_size: 10000
+            
+            # send IMMEDIATELY
+            timeout: 0s
+        ```
+      * _Example4:_ [here](./testdata/config.yaml)
 
-Examples:
+## `metadata_keys` & `metadata_cardinality_limit`
 
-This configuration contains one default batch processor and a second
-with custom settings.  The `batch/2` processor will buffer up to 10000
-spans, metric data points, or log records for up to 10 seconds without
-splitting data items to enforce a maximum batch size.
+* Batching by metadata
+  * requirements  
+    * ⚠️configure receivers with `include_metadata: true`⚠️
+      * Reason:🧠metadata keys are available | processor🧠
+  * enables
+    * support -- for -- MULTI-tenant OpenTelemetry Collector pipelines
+      * tenant's data NEVER sent -- with -- OTHER tenant's credentials
+      * _Example:_
 
-```yaml
-processors:
-  batch:
-  batch/2:
-    send_batch_size: 10000
-    timeout: 10s
-```
+        ```yaml
+        processors:
+          batch:
+            # batch data by tenant-id
+            metadata_keys:
+            - tenant_id
+        
+            # limit to 10 batcher processes before raising errors
+            metadata_cardinality_limit: 10
+        ```
+  * recommendations
+    * 👀use an Auth extension👀
+      * Reason:🧠validate the relevant metadata-key values🧠
 
-This configuration will enforce a maximum batch size limit of 10000
-spans, metric data points, or log records without introducing any
-artificial delays.
-
-```yaml
-processors:
-  batch:
-    send_batch_max_size: 10000
-    timeout: 0s
-```
-
-Refer to [config.yaml](./testdata/config.yaml) for detailed
-examples on using the processor.
-
-## Batching and client metadata
-
-Batching by metadata enables support for multi-tenant OpenTelemetry
-Collector pipelines with batching over groups of data having the same
-authorization metadata.  For example:
-
-```yaml
-processors:
-  batch:
-    # batch data by tenant-id
-    metadata_keys:
-    - tenant_id
-
-    # limit to 10 batcher processes before raising errors
-    metadata_cardinality_limit: 10
-```
-
-Receivers should be configured with `include_metadata: true` so that
-metadata keys are available to the processor.
-
-Note that each distinct combination of metadata triggers the
-allocation of a new background task in the Collector that runs for the
-lifetime of the process, and each background task holds one pending
-batch of up to `send_batch_size` records.  Batching by metadata can
-therefore substantially increase the amount of memory dedicated to
-batching.
-
-The maximum number of distinct combinations is limited to the
-configured `metadata_cardinality_limit`, which defaults to 1000 to
-limit memory impact.
-
-Users of the batching processor configured with metadata keys should
-consider use of an Auth extension to validate the relevant
-metadata-key values.
-
-The number of batch processors currently in use is exported as the
-`otelcol_processor_batch_metadata_cardinality` metric.
+* `otelcol_processor_batch_metadata_cardinality`
+  * := metric /
+    * number of batch processors / CURRENTLy in use

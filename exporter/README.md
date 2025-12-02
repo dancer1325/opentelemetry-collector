@@ -14,9 +14,9 @@
 
 * configuration -- via -- YAML
   * top-level `exporters`
-
+ 
 * exporter full names
-  * == exporterType + '/' customName 
+  * == exporterType + '/' + customName 
   * uses
     * refer | pipelines
   * MUST be UNIQUE

@@ -3,39 +3,54 @@
   * `timeout`
     * == time / AFTER it,
       * batch will be sent 
-        * ⚠️regardless of size⚠️
+        * ⚠️regardless of `send_batch_size`⚠️
     * by default,
       * 200 ms
     * if it's set 0 -> as soon as data comes -> batched data will be sent IMMEDIATELY
-      * == ignore `send_batch_size`
+      * == ⚠️ignore `send_batch_size`⚠️
         * ⚠️ALTHOUGH batched data's size <= `send_batch_size`⚠️ 
   * `send_batch_size`
+    * == number of (spans OR metric data points OR log records) / 👀afterward, a batch is sent👀
+      * regardless of the `timeout`
+      * == trigger
+        * == ❌NOT affect batch's size❌
+          * see `send_batch_max_size`
     * by default,
       * 8192
-    * TODO: SendBatchSize is the size of a batch which after hit, will trigger it to be sent
-    * When this is set to zero, the batch size is ignored and data will be sent immediately subject to only send_batch_max_size
+    * if you set 0 ->
+      * batch size is ignored
+      * data is sent IMMEDIATELY
+        * batch's size restriction: < `send_batch_max_size`
   * `send_batch_max_size`
-    * SendBatchMaxSize is the maximum size of a batch
-    * It must be larger than SendBatchSize
-    * Larger batches are split into smaller units
-    * Default value is 0, that means no maximum size.
+    * == batch size maximum
+      * by default, 
+        * 0   == NO maximum size
+      * as larger -> split | smaller units 
+    * requirements
+      * \>= `send_batch_size`
+  * `metadata_keys`
+    * == client's metadata keys /
+      * uses
+        * 👀form DISTINCT batchers👀
+    * == `[]string`
+      * case-insensitive
+      * duplicated entries -> validation error
+      * empty != unset
+      * by default,
+        * empty
+    * if it's
+      * empty -> use 1! batcher instance
+      * 👀NOT empty -> 1 batcher instance / DIFFERENT combination of `client.Metadata` values👀
+        * -> increase memory / dedicated to batching
+  * `metadata_cardinality_limit`
+    * == maximum number of batcher instances / 
+      * created -- through a -- DIFFERENT combination of MetadataKeys
+      * by default,
+        * 1000
+    * if it's NOT empty -> restricts the number of UNIQUE combinations of `metadata_keys`' values / processed | lifetime of the process
 
-        // MetadataKeys is a list of client.Metadata keys that will be
-        // used to form distinct batchers.  If this setting is empty,
-        // a single batcher instance will be used.  When this setting
-        // is not empty, one batcher will be used per distinct
-        // combination of values for the listed metadata keys.
-        //
-        // Empty value and unset metadata are treated as distinct cases.
-        //
-        // Entries are case-insensitive.  Duplicated entries will
-        // trigger a validation error.
-        MetadataKeys []string `mapstructure:"metadata_keys"`
-
-        // MetadataCardinalityLimit indicates the maximum number of
-        // batcher instances that will be created through a distinct
-        // combination of MetadataKeys.
-        MetadataCardinalityLimit uint32 `mapstructure:"metadata_cardinality_limit"`
-        // prevent unkeyed literal initialization
-        _ struct{}
-    }
+* batcher instance
+  * == goroutine /
+    * collector creates
+    * manages the batching of specific metadata
+    * 's lifetime == OpenTelemetry Collector's lifetime

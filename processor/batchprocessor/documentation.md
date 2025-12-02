@@ -4,9 +4,9 @@
 
 ## Internal Telemetry
 
-The following telemetry is emitted by this component.
+* == telemetry / emitted -- by -- this component
 
-### otelcol_processor_batch_batch_send_size
+### `otelcol_processor_batch_batch_send_size`
 
 Number of units in the batch
 
@@ -14,7 +14,7 @@ Number of units in the batch
 | ---- | ----------- | ---------- |
 | {units} | Histogram | Int |
 
-### otelcol_processor_batch_batch_send_size_bytes
+### `otelcol_processor_batch_batch_send_size_bytes`
 
 Number of bytes in batch that was sent. Only available on detailed level.
 
@@ -22,7 +22,7 @@ Number of bytes in batch that was sent. Only available on detailed level.
 | ---- | ----------- | ---------- |
 | By | Histogram | Int |
 
-### otelcol_processor_batch_batch_size_trigger_send
+### `otelcol_processor_batch_batch_size_trigger_send`
 
 Number of times the batch was sent due to a size trigger
 
@@ -30,7 +30,7 @@ Number of times the batch was sent due to a size trigger
 | ---- | ----------- | ---------- | --------- |
 | {times} | Sum | Int | true |
 
-### otelcol_processor_batch_metadata_cardinality
+### `otelcol_processor_batch_metadata_cardinality`
 
 Number of distinct metadata value combinations being processed
 
@@ -38,7 +38,7 @@ Number of distinct metadata value combinations being processed
 | ---- | ----------- | ---------- | --------- |
 | {combinations} | Sum | Int | false |
 
-### otelcol_processor_batch_timeout_trigger_send
+### `otelcol_processor_batch_timeout_trigger_send`
 
 Number of times the batch was sent due to a timeout trigger
 
