@@ -1,0 +1,52 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  # Default batch processor
+  batch:
+  
+  # Custom batch - size trigger
+  batch/size:
+    send_batch_size: 100
+    timeout: 10s
+  
+  # Custom batch - no delay
+  batch/nodelay:
+    send_batch_max_size: 1000
+    timeout: 0s
+
+exporters:
+  # Console exporter to view data
+  debug:
+    verbosity: detailed
+  
+  # OTLP exporter (example)
+  otlp:
+    endpoint: localhost:4317
+    tls:
+      insecure: true
+
+service:
+  pipelines:
+    # Pipeline for TRACES (spans)
+    traces:
+      receivers: [otlp]
+      processors: [batch/size]
+      exporters: [debug]
+    
+    # Pipeline for METRICS
+    metrics:
+      receivers: [otlp]
+      processors: [batch/nodelay]
+      exporters: [debug]
+    
+    # Pipeline for LOGS
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug]
