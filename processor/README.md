@@ -29,14 +29,15 @@
 
 ## Data Ownership
 
-* TODO:
-The ownership of the `pdata.Traces`, `pdata.Metrics` and `pdata.Logs` data in a pipeline
-is passed as the data travels through the pipeline. The data is created by the receiver
-and then the ownership is passed to the first processor when `ConsumeTraces`/`ConsumeMetrics`/`ConsumeLogs`
-function is called.
+* ownership of the `pdata.Traces`, `pdata.Metrics` and `pdata.Logs` data | pipeline
+  * is passed -- , through the pipeline, as the -- data travels 
+* data
+  * created -- by the -- receiver
+  * | call `ConsumeTraces`/`ConsumeMetrics`/`ConsumeLogs` -> ownership is passed -- to the -- FIRST processor 
 
-Note: the receiver may be attached to multiple pipelines, in which case the same data
-will be passed to all attached pipelines via a data fan-out connector.
+* receiver
+  * may be attached | MULTIPLE pipelines
+    * -> SAME data is passed -- , via a data fan-out connector, to -- ALL attached pipelines 
 
 From data ownership perspective pipelines can work in 2 modes:
 * Exclusive data ownership
@@ -62,7 +63,8 @@ further to each pipeline. This ensures that each pipeline has its own exclusive 
 data, and the data can be safely modified in the pipeline.
 
 The exclusive ownership of data allows processors to freely modify the data while
-they own it (e.g. see `attributesprocessor`). The duration of ownership of the data
+they own it (_Example:_ [`attributesprocessor`](https://github.com/dancer1325/opentelemetry-collector-contrib/tree/main/processor/attributesprocessor))
+The duration of ownership of the data
 by processor is from the beginning of `ConsumeTraces`/`ConsumeMetrics`/`ConsumeLogs` 
 call until the processor calls the next processor's `ConsumeTraces`/`ConsumeMetrics`/`ConsumeLogs`
 function, which passes the ownership to the next processor. After that the processor
@@ -99,8 +101,8 @@ data cloning described in Exclusive Ownership section.
 
 ## Ordering Processors
 
-The order processors are specified in a pipeline is important as this is the
-order in which each processor is applied.
+* order processors | pipeline
+  * == order | EACH processor is applied
 
 ## Creating Custom Processors
 
